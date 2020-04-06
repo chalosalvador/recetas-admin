@@ -1,0 +1,22 @@
+
+.imagen {
+    height: 32px;
+    background-image: url('../imgs/foodservice-Welcome.png');
+    background-color: lightblue;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin: 16px;
+}
+
+.ant-carousel .slick-slide {
+    text-align: center;
+    height: 565px;
+    line-height: 160px;
+    background: lavender;
+    overflow: hidden;
+}
+
+.ant-carousel .slick-slide h3 {
+    color: #fff;
+}
