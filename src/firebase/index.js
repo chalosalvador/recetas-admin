@@ -1,7 +1,8 @@
-import app from 'firebase/app';
+import app, { firestore } from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
+import 'firebase/firestore';
 import 'firebase/functions';
 
 
@@ -20,7 +21,9 @@ app.initializeApp( config );
 
 // export default app;
 const auth = app.auth();
-const db = app.database();
+const db = app.firestore();
+
+
 // export const storage = app.storage();
 // export const functions = app.functions();
 
@@ -50,6 +53,13 @@ export const doLogout = () => auth.signOut();
 // doPasswordUpdate = password =>
 //   this.auth.currentUser.updatePassword( password );
 
-export const saveChefsData = (Chefname, specialism, experience, job, nationality) =>{
-	return this.db.ref('chefs').push(Chefname, specialism, experience, job, nationality);
-}
+/*
+
+export const addChef= db.collection("chefs").add({Chefname: this.state.Chefname, specialism: this.state.specialism, experience: this.state.experience, job: this.state.job, nationality: this.state.nationality});
+
+
+export const addChef= (Chefname, specialism, experience, job, nationality) => {
+  return this.db.collection("chefs").add({Chefname, specialism, experience, job, nationality});
+};
+
+*/

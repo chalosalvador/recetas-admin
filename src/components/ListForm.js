@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Button, Checkbox, Form, Icon, Input, message } from 'antd';
 import { withRouter } from 'react-router-dom';
-import { saveChefsData } from '../firebase';
+import { addChef } from '../firebase';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
@@ -38,11 +38,11 @@ class ListForm extends Component {
     this.props.form.validateFields( ( err, values ) => {
       if( !err ) {
         console.log( 'Received values of form: ', values );
-        const { Chefname, specialism, experience, job, nationality } = values;
+        //const { Chefname, specialism, experience, job, nationality } = values;
 
 
-        saveChefsData(Chefname, specialism, experience, job, nationality)
-
+        //saveChefsData(Chefname, specialism, experience, job, nationality)
+        this.setState({Chefname: ""})
           .catch( error => {
             console.log( 'error', error );
             message.error( translateMessage( error.code ) );
@@ -79,9 +79,11 @@ class ListForm extends Component {
             rules: [
               {
                 type: 'text',
-                required: true,
-                value: 'Chefname',
                 message: 'Ingresa texto válido'
+              },
+              {
+                required: true,
+                message: 'Ingresa nombres completos'
               }
             ]
           } )(
