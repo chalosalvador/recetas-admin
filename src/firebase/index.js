@@ -6,7 +6,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 
 
-const config = {
+export const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
@@ -21,10 +21,16 @@ app.initializeApp( config );
 
 // export default app;
 const auth = app.auth();
-const db = app.firestore();
+export const db = app.firestore();
+export const ref = app.firestore().collection('chefs');
+export const refRecipes = app.firestore().collection('recipes');
+export const refI = app.firestore().collection('ingredients');
+export const refUnits = app.firestore().collection('units');
 
 
-// export const storage = app.storage();
+export const storage = app.storage();
+
+export const storageRef = app.storage().ref();
 // export const functions = app.functions();
 
 // *** Auth API ***
@@ -53,13 +59,5 @@ export const doLogout = () => auth.signOut();
 // doPasswordUpdate = password =>
 //   this.auth.currentUser.updatePassword( password );
 
-/*
-
-export const addChef= db.collection("chefs").add({Chefname: this.state.Chefname, specialism: this.state.specialism, experience: this.state.experience, job: this.state.job, nationality: this.state.nationality});
 
 
-export const addChef= (Chefname, specialism, experience, job, nationality) => {
-  return this.db.collection("chefs").add({Chefname, specialism, experience, job, nationality});
-};
-
-*/

@@ -4,9 +4,7 @@ import ListForm from "../components/ListForm";
 
 const ChefsList = props => (
     <div>
-
-
-        <ListForm formTitle="Ver lista" buttonText="Agregar" />
+        <ListForm ListTitle="Listado Usuarios Chefs" />
 
     </div>
 );

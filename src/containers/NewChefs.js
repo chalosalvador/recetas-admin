@@ -6,7 +6,7 @@ const NewChefs = props => (
     <div>
 
 
-        <ChefsForm formTitle="Crear perfiles de Chefs" buttonText="Agregar" />
+        <ChefsForm formTitle="Crear Perfil Chefs" buttonText="Agregar" />
 
     </div>
 );
