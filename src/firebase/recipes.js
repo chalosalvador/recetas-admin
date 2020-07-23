@@ -2,6 +2,7 @@
 import {db} from './index'
 import { setState } from 'expect/build/jestMatchersObject';
 
+
 const add= (recipesData) => {
     return db.collection("recipes").add(recipesData);
 };
@@ -10,22 +11,21 @@ const onDelete =(id)=>{
     return db.collection('recipes').doc(id).delete();
 };
 
-const onView=(querySnapshot, boards)=>{
+const onView=(querySnapshot, listR)=>{
     return querySnapshot.forEach((doc) => {
       
-        const{chef,description, servings, time,name, calories, category, protein, fat,ingredients,steps }= doc.data();
-        boards.push({
+        const{chef, description, servings, time, name, nutritionFacts, category, ingredients, steps }= doc.data();
+        listR.push({
             key: doc.id,
             doc,
             name,
+            //chef: ListChef[chef.id].name+ " "+ListChef[chef.id].lastname,
             chef,
             description, 
             category,
             servings, 
             time,
-            calories,
-            protein,
-            fat,
+            nutritionFacts,
             ingredients,
             steps
         });
@@ -37,33 +37,33 @@ const onUpdate = (id, recipesData) => {
         recipesData
     )
 }
-const viewChefs=(querySnapshot, boards)=>{
+const viewChefs=(querySnapshot, LChefs)=>{
     return querySnapshot.forEach((doc) => {
       
         const{name, lastname}= doc.data();
-        boards.push({
+        LChefs.push({
             key: doc.id,
             name,
             lastname
         });
     });     
 };
-const viewIngredients=(querySnapshot, boards)=>{
+const viewIngredients=(querySnapshot, LIngredients)=>{
     return querySnapshot.forEach((doc) => {
       
         const{name}= doc.data();
-        boards.push({
+        LIngredients.push({
             key: doc.id,
             name
         });
     });     
 };
 
-const viewUnits=(querySnapshot, boards)=>{
+const viewUnits=(querySnapshot, LUnits)=>{
     return querySnapshot.forEach((doc) => {
       
         const{name}= doc.data();
-        boards.push({
+        LUnits.push({
             key: doc.id,
             name
         });
@@ -71,9 +71,6 @@ const viewUnits=(querySnapshot, boards)=>{
 };
 
 
-const chefName=()=>{
-    
-}
 const Recipes = {
     add,
     onDelete,

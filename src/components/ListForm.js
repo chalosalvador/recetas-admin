@@ -6,12 +6,13 @@ import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
-import { UserAddOutlined, DeleteFilled, EditOutlined   } from '@ant-design/icons';
-import { Table, Input, Button, Popconfirm, Form, Modal } from 'antd';
-
+import { UserAddOutlined, DeleteFilled, EditOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Table, Input, Button, Popconfirm, Form, Modal, Typography } from 'antd';
 import { ADDCHEFS } from '../constants/routes';
 import Chefs from '../firebase/chefs';
 import ChefsForm from '../components/ChefsForm';
+
+const { Title } = Typography;
 
 class ListForm extends Component {
 
@@ -105,18 +106,18 @@ class ListForm extends Component {
       {
         title: '',
         dataIndex: 'delete',
+        width: 70,
+        fixed: 'right',
         render: (text, boards) =>
-     
-          <Popconfirm   title="Estas seguro de eliminar?"  onConfirm={(e) => Chefs.onDelete(boards.key, e)}>
+          <Popconfirm   title="Estas seguro de eliminar?" icon={<QuestionCircleOutlined style={{ color: 'red' }} />} onConfirm={(e) => Chefs.onDelete(boards.key, e)}>
           <Button danger><DeleteFilled/></Button>
-
           </Popconfirm>
-         
-
       },
       {
         title: '',
         dataIndex: 'edit',
+        width: 70,
+        fixed: 'right',
         render: (value, chef) =>
           <Button type="primary" 
           icon={ <EditOutlined />}
@@ -135,7 +136,7 @@ class ListForm extends Component {
     return (
 
       <React.Fragment>
-        <h1>{ListTitle}</h1>
+        <Title level={4}>{ListTitle}</Title>
         <br />
 
         <Link to={ADDCHEFS}><Button type="primary" icon={<UserAddOutlined />}>Agregar
@@ -143,11 +144,10 @@ class ListForm extends Component {
 
         <br /><br />
         <Table
-
-          size='middle'
           columns={columns}
           dataSource={dataSource}
-          bordered >
+          scroll={{ x: 1300 }} >
+          >
 
         </Table>
 

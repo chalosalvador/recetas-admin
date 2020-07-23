@@ -6,7 +6,7 @@ import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 import Loadable from 'react-loadable';
 import Loading from '../components/Loading';
-import { ABOUT, HOME, LOGIN, ADDCHEFS,  CHEFSLIST, ADDRECIPIES, RECIPESLIST } from '../constants/routes';
+import { ABOUT, HOME, LOGIN, ADDCHEFS,  CHEFSLIST, ADDRECIPIES, RECIPESLIST, USERSLIST } from '../constants/routes';
 
 const AsyncLogin = Loadable( {
   loader: () => import( '../containers/LoginPage' ),
@@ -42,6 +42,10 @@ const AsyncRecipesList = Loadable( {
   loader: () => import( '../containers/RecipesList' ),
   loading: Loading
 } );
+const AsyncUserList = Loadable( {
+  loader: () => import( '../containers/UserList' ),
+  loading: Loading
+} );
 
 
 const AppRouter = () => {
@@ -55,6 +59,8 @@ const AppRouter = () => {
 
       <PrivateRoute exact={ true } path={ ADDRECIPIES } component={ AsyncAddRecipes} />
       <PrivateRoute exact={ true } path={ RECIPESLIST } component={ AsyncRecipesList} />   
+      
+      <PrivateRoute exact={ true } path={ USERSLIST } component={ AsyncUserList} /> 
 
       <PublicRoute path={ LOGIN } component={ AsyncLogin } />
       <PublicRoute path={ ABOUT } component={ AsyncAbout } />

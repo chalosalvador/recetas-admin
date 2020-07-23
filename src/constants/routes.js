@@ -9,3 +9,4 @@ export const ADDCHEFS ='/agregar-chefs';
 export const CHEFSLIST ='/lista-chefs';
 export const ADDRECIPIES ='/agregar-recetas';
 export const RECIPESLIST ='/lista-recetas';
+export const USERSLIST= '/lista-usuarios-app';

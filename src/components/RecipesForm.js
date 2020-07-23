@@ -4,15 +4,18 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
 import { translateMessage } from '../helpers/translateMessage';
-import { Form, Select, Input, InputNumber, Button } from 'antd';
+import { Form, Select, Input, InputNumber, Button, Divider, notification, message } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { ref, refI, refUnits, refRecipes } from '../firebase/index';
+import { ref, refI, refUnits, refRecipes, db, createAt } from '../firebase/index';
 import Recipes from '../firebase/recipes';
+import ingredientS from '../firebase/ingredients';
 import { FieldTimeOutlined } from '@ant-design/icons';
+import Ingredients from '../firebase/ingredients';
+import Title from 'antd/lib/typography/Title';
 
 
 const { Option } = Select;
-const formIngredients={
+const formIngredients = {
   labelCol: {
     span: 7,
   },
@@ -21,8 +24,8 @@ const formIngredients={
     offset: 0
   },
 }
-const formIngredients1={
-  
+const formIngredients1 = {
+
   wrapperCol: {
     span: 10,
     offset: 7
@@ -54,6 +57,7 @@ const formButtonSubmite = {
     offset: 9
   },
 };
+
 class RecipesForm extends Component {
 
   initialState = {
@@ -66,7 +70,7 @@ class RecipesForm extends Component {
 
 
     recipe: '',
-    aux: [],
+    NEWingredient: ''
 
   };
   constructor(props) {
@@ -80,19 +84,41 @@ class RecipesForm extends Component {
   onReset = () => {
     this.formRef.current.resetFields();
   };
-
-
+  
   handleSubmit = values => {
-    //console.log(values);
+    console.log(values);
+    const referenciaChef = ref.doc(values.chef)
+    const currentRecipe = {
+      ...values,
+      createAt,
+      chef: referenciaChef,
+      ingredients: values.ingredients.map((ingredientData, index) => {
+        //console.log("ref ingrediente",ingredientData.ingredient);
+        //console.log("ref ingrediente",refI.doc(ingredientData.ingredient));
+       return {
+          ...ingredientData,
+          ingredient: refI.doc(ingredientData.ingredient),
+          unit: refUnits.doc(ingredientData.unit),
+        }
+      })
+    }
+//    values.createAt= createAt;
+    
+
+    
+    //recipe.chef = referencia
+
     if (!this.props.recipe) {
-      Recipes.add(values)
-      this.formRef.current.resetFields();      
+
+      Recipes.add(currentRecipe)
+      message.loading( 'Cargando...', 1.5).then(()=> message.success('Registro Exitoso!'))
+      this.formRef.current.resetFields();
     } else {
-      Recipes.onUpdate(this.props.recipe.key, values)
+      Recipes.onUpdate(this.props.recipe.key, currentRecipe)
+      message.loading( 'Cargando...', 1.5).then(()=> message.success('Actualización Exitosa!'))
     }
   }
-
-
+  
   onCollectionUpdate = (querySnapshot) => {
     const chefNames = [];
     Recipes.viewChefs(querySnapshot, chefNames)
@@ -119,14 +145,36 @@ class RecipesForm extends Component {
       unitNames
     });
   }
+  onNameChange = event => {
+    this.setState({
+      NEWingredient: event.target.value,
+    });
+  };
+  addIng = () => {
+    if (this.state.NEWingredient == "") {
+      console.log("VACIO")
+      message.error('Ingrese un nombre para agregarlo',);
+    } else {
+      const valor = (ingredientNames) => ingredientNames.name === this.state.NEWingredient;
 
+      if (this.state.ingredientNames.some(valor) === true) {
+        console.log(this.state.ingredientNames.some(valor), "Ya existe")    
+        message.error('Ese elemento ya existe. Por favor agregar uno nuevo o buscar entre las opciones',);
+          
+      }else {
+        console.log("No existe ")
+        Ingredients.addIngredient({ name: this.state.NEWingredient })
+       // message.success('Se agrego el elemento con exito!');
+        message.loading( 'Cargando...', 1.5).then(()=> message.success('Se agrego el elemento con exito!'))
+      }
+    }
+  };
 
   render() {
 
 
     const { buttonText, title, recipe = {}, } = this.props;
-    //console.log('receta', recipe);
-
+    console.log('receta', recipe);
     return (
 
       <React.Fragment>
@@ -145,21 +193,17 @@ class RecipesForm extends Component {
             category: recipe.category,
             servings: recipe.servings,
             time: recipe.time,
-            calories: recipe.calories,
-            protein: recipe.protein,
-            fat: recipe.fat,
+            nutritionFacts: recipe.nutritionFacts,
             ingredients: recipe.ingredients || [null],
             ingredient: recipe.ingredient || [null],
             unit: recipe.unit || [null],
             quantity: recipe.quantity || [null],
-            steps: recipe.steps || [null]
-
+            steps: recipe.steps || [null],
+            createAt: "",
           }}
         >
-          <h1>{title}</h1>
-          {console.log('CHEFS:', this.state.chefNames)}
-          {console.log('ingredients:', this.state.ingredientNames)}
-          {console.log('units:', this.state.unitNames)}
+          <Title level={4}>{title}</Title>
+
           <Form.Item
             name="name"
             label="Titulo"
@@ -181,16 +225,16 @@ class RecipesForm extends Component {
               message: "Seleccione un Chef"
             }]}
           >
-            <Select placeholder="Seleccione un chef"   >
+            <Select placeholder="Seleccione un chef">
               {this.state.chefNames.map(chef => (
-                <Option key={chef.key} >{[chef.name, ' ', chef.lastname]}</Option>
+                <Option key={chef.key} >{`${chef.name} ${chef.lastname}`}</Option>
               ))}
             </Select>
           </Form.Item>
 
           <Form.Item
             name="description"
-            label="Descripcion"
+            label="Descripcion/Nota"
             rules={[{
               required: true,
               message: "Ingrese descripcion"
@@ -206,7 +250,6 @@ class RecipesForm extends Component {
             rules={[{
               required: true,
               message: 'Seleccione una Categoría',
-              //type: 'array',
             }]}
           >
             <Select placeholder="Elegir una categoría"  >
@@ -235,48 +278,52 @@ class RecipesForm extends Component {
             <InputNumber min={1} placeholder="minutes" />
           </Form.Item>
 
-          <Form.Item label="Info. Nutricional" >
+          <Form.Item
+            label="Info. Nutricional"
+            rules={[{
+              type: 'array',
+            }]}>
             <Input.Group compact >
               <Form.Item
-                name="calories"
+                name={["nutritionFacts", "calories"]}
+                extra="%Calorias"
                 rules={[{
                   required: true,
                   message: "Ingrese Calorías"
                 }]}
                 style={{ display: 'inline-block', }}
               >
-                <InputNumber min={1} placeholder="%Calories" />
+                <InputNumber min={0} placeholder="%Calories" />
               </Form.Item>
               <Form.Item
-                name="protein"
+                name={["nutritionFacts", "protein"]}
+                extra="%Proteinas"
                 rules={[{
                   required: true,
                   message: "Ingrese Proteína"
                 }]}
                 style={{ display: 'inline-block', margin: '0 6px' }}
               >
-                <InputNumber min={1} placeholder="%Proteins" />
+                <InputNumber min={0} placeholder="%Proteins" />
               </Form.Item>
 
               <Form.Item
-                name="fat"
+                name={["nutritionFacts", "fat"]}
+                extra="%Grasas"
                 rules={[{
                   required: true,
                   message: "Ingrese Grasas"
                 }]}
                 style={{ display: 'inline-block', }}
               >
-                <InputNumber min={1} placeholder="%Fat" />
+                <InputNumber min={0} placeholder="%Fat" />
               </Form.Item>
-            </Input.Group>
+            </Input.Group  >
           </Form.Item>
 
           <Form.List name="ingredients" >
-            {(fields = [{
-              ingredient: null,
-              unit: null,
-              quantity: null
-            }], { add, remove }) => {
+            {(fields
+              , { add, remove }) => {
               return (
                 <div>
                   {fields.map((field, index) => (
@@ -285,7 +332,7 @@ class RecipesForm extends Component {
                       {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
                       label={index === 0 ? 'Ingredientes: ' : ''}
                       required={true}
-                    //key={field.key}
+                    key={field.key}
                     >
                       <Form.Item
                         {...field}
@@ -297,7 +344,23 @@ class RecipesForm extends Component {
                         rules={[{ required: true, message: 'Ingrese un ingrediente' }]}
                         noStyle
                       >
-                        <Select placeholder='Ingrediente'  >
+                        <Select placeholder='Ingrediente'
+                          dropdownRender={menu => (
+                            <div>
+                              {menu}
+                              <Divider style={{ margin: '4px 0' }} />
+                              <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                                <Input style={{ flex: 'auto' }} value={this.state.NEWingredient} onChange={this.onNameChange} />
+                                <a
+                                  style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                                  onClick={this.addIng}
+                                >
+                                  <PlusOutlined /> Agregar Ingrediente
+                              </a>
+                              </div>
+                            </div>
+                          )}
+                        >
                           {this.state.ingredientNames.map(ingredients => (
                             <Option key={ingredients.key}>{ingredients.name}</Option>
                           ))}
@@ -332,14 +395,14 @@ class RecipesForm extends Component {
                         <InputNumber min={1} placeholder="Cantidad" />
                       </Form.Item>
                       {fields.length > 1 ? (
-                      <MinusCircleOutlined
-                      className="dynamic-delete-button"
+                        <MinusCircleOutlined
+                          className="dynamic-delete-button"
                           style={{ margin: '0 5px' }}
-                        onClick={() => {
-                          remove(field.name);
-                        }}
-                      />
-                    ) : null}
+                          onClick={() => {
+                            remove(field.name);
+                          }}
+                        />
+                      ) : null}
                     </Form.Item>
                   ))}
                   <Form.Item {...formButton}>
@@ -408,6 +471,14 @@ class RecipesForm extends Component {
               );
             }}
           </Form.List>
+          <Form.Item
+          name="createAt">
+          <Input
+            placeholder='createAt'
+            disabled
+            hidden
+          />
+        </Form.Item>
 
           <Form.Item {...formButtonSubmite}>
             <Button type="primary" htmlType="submit">
@@ -422,21 +493,60 @@ class RecipesForm extends Component {
 }
 
 export default compose(withRouter)(RecipesForm);
-/*
-
+    /*
+    
 <Form.Item
-            name="category"
-            label="Categoria"
-            rules={[{
-              required: true,
-              message: 'Seleccione una Categoría',
-              type: 'array',
-            }]}
-          >
-            <Select mode="multiple" placeholder="Elegir una categoría"  >
-              <Option value="Desayuno">Desayuno</Option>
-              <Option value="Almuerzo">Almuerzo</Option>
-              <Option value="Cena">Cena</Option>
-            </Select>
-          </Form.Item>
-*/
+          name="category"
+          label="Categoria"
+          rules={[{
+            required: true,
+            message: 'Seleccione una Categoría',
+            type: 'array',
+          }]}
+        >
+          <Select mode="multiple" placeholder="Elegir una categoría"  >
+            <Option value="Desayuno">Desayuno</Option>
+            <Option value="Almuerzo">Almuerzo</Option>
+            <Option value="Cena">Cena</Option>
+          </Select>
+        </Form.Item>
+
+        /////////////////////////////////////
+
+
+        <Form.Item label="Info. Nutricional" >
+          <Input.Group compact >
+            <Form.Item
+              name="calories"
+              rules={[{
+                required: true,
+                message: "Ingrese Calorías"
+              }]}
+              style={{ display: 'inline-block', }}
+            >
+              <InputNumber min={1} placeholder="%Calories" />
+            </Form.Item>
+            <Form.Item
+              name="protein"
+              rules={[{
+                required: true,
+                message: "Ingrese Proteína"
+              }]}
+              style={{ display: 'inline-block', margin: '0 6px' }}
+            >
+              <InputNumber min={1} placeholder="%Proteins" />
+            </Form.Item>
+
+            <Form.Item
+              name="fat"
+              rules={[{
+                required: true,
+                message: "Ingrese Grasas"
+              }]}
+              style={{ display: 'inline-block', }}
+            >
+              <InputNumber min={1} placeholder="%Fat" />
+            </Form.Item>
+          </Input.Group>
+        </Form.Item>
+        */

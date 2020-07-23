@@ -49,12 +49,13 @@ class LoginForm extends Component {
           } else {
             // muestra error de permiso denegado
             console.log( 'Acceso denegado')
+            message.error("Acceso Denegado!")
           }
             
           } )
           .catch( error => {
             console.log( 'error', error );
-            message.error( translateMessage( error.code ) );
+            //message.error( translateMessage( error.code ) );
           } );
      
   };

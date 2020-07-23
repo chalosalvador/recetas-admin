@@ -12,10 +12,14 @@ const viewIngredients=(querySnapshot, table)=>{
         });
     });     
 };
+const addIngredient= (ingredientData) => {
+    return db.collection("ingredients").add(ingredientData);
+};
 
 
 const Ingredients = {
-    viewIngredients
+    viewIngredients,
+    addIngredient
 };
 
 export default Ingredients;

@@ -1,32 +1,17 @@
 import React, { Component } from 'react';
 import '../styles/home.css'
 import {Carousel}  from 'antd';
+import welcome from '../imgs/admin.jpg'
+import { Typography } from 'antd';
+import Home from "../components/Home";
+
 
 const HomePage = props => (
+    <React.Fragment>
 
+<Home titleHome="Bienvenido" />
 
-    <Carousel autoplay>
-        <div>
-            <img src="../imgs/logo.png" alt="imagen1"/>
-        </div>
-        <div>
-            <h3>2</h3>
-        </div>
-        <div>
-            <h3>3</h3>
-        </div>
-        <div>
-            <h3>4</h3>
-        </div>
-    </Carousel>
+    </React.Fragment>
 );
-
-
-
-
-
-
-
-
 
 export default HomePage;

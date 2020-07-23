@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, message, InputNumber } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input, message, InputNumber, Breadcrumb, Typography } from 'antd';
+import { UserOutlined, HomeOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
 import { translateMessage } from '../helpers/translateMessage';
-import { ref } from '../firebase/index';
-
+import { ref, createAt } from '../firebase/index';
 import Chefs from '../firebase/chefs';
+
+
+const { Title } = Typography;
 
 
 const layout = {
@@ -39,25 +41,35 @@ class ChefsForm extends Component {
   onReset = () => {
     this.formRef.current.resetFields();
   };
-  
+
 
   handleSubmit = values => {
-
+    values.createAt = createAt;
+    console.log(values);
     if (!this.props.chef) {
       Chefs.add(values)
+      message.loading( 'Cargando...', 1.5).then(()=> message.success('Registro Exitoso!'))
       this.formRef.current.resetFields();
     } else {
-      Chefs.onUpdate(this.props.chef.key,values)
+      Chefs.onUpdate(this.props.chef.key, values)
+      message.loading( 'Cargando...', 1.5).then(()=> message.success('Actualización Exitosa!'))
+      
+      
     }
   };
 
 
   render() {
     const { formTitle, buttonText, chef = {} } = this.props;
-    console.log('chef', chef);
+    console.log('chefSelect', chef);
 
 
     return (
+      <React.Fragment>
+      
+      
+      <br/>
+
 
       <Form {...layout}
         ref={this.formRef}
@@ -70,19 +82,20 @@ class ChefsForm extends Component {
           speciality: chef.speciality,
           experience: chef.experience,
           job: chef.job,
-          nationality: chef.nationality
+          nationality: chef.nationality,
+          createAt: "",
         }}
       >
-        <h1>{formTitle}</h1>
+        <Title level={4}>{formTitle}</Title>
 
 
         <Form.Item
           name="name"
           label="Nombre"
           rules={[{
-              required: true,
-              message: 'Ingresar nombre'
-            }]}>
+            required: true,
+            message: 'Ingresar nombre'
+          }]}>
 
           <Input prefix={<UserOutlined />}
             placeholder='Nombre '
@@ -91,19 +104,20 @@ class ChefsForm extends Component {
         <Form.Item
           name="lastname"
           label="Apellido"
-          rules={[ {
-              required: true,
-              message: 'Ingresar apellido'
-            }]}>
+          rules={[{
+            required: true,
+            message: 'Ingresar apellido'
+          }]}>
           <Input prefix={<UserOutlined />}
             placeholder='Apellido'
           />
 
         </Form.Item >
-        <Form.Item name="speciality" label="Especialidad" 
-        rules={[{ 
-          required: true, 
-          message: 'Ingresar especialidad' }]}>
+        <Form.Item name="speciality" label="Especialidad"
+          rules={[{
+            required: true,
+            message: 'Ingresar especialidad'
+          }]}>
           <Input
             placeholder='Especialidad'
           />
@@ -113,12 +127,12 @@ class ChefsForm extends Component {
           name="experience"
           label="Años experiencia"
           rules={[{
-              required: true,
-              message: 'Ingresar años de experiencia'
-            }
+            required: true,
+            message: 'Ingresar años de experiencia'
+          }
           ]}>
 
-          <InputNumber min={1} max={40} 
+          <InputNumber min={1} max={40}
             placeholder="#"
           />
 
@@ -127,9 +141,9 @@ class ChefsForm extends Component {
           name="job"
           label="Trabajo Actual"
           rules={[{
-              required: true,
-              message: 'Ingresar trabajo actual'
-            }]}>
+            required: true,
+            message: 'Ingresar trabajo actual'
+          }]}>
 
           <Input
             placeholder='Trabajo Actual'
@@ -140,21 +154,31 @@ class ChefsForm extends Component {
           name="nationality"
           label="Nacionalidad"
           rules={[{
-              required: true,
-              message: 'Ingresar nacionalidad'
-            }]}>
+            required: true,
+            message: 'Ingresar nacionalidad'
+          }]}>
           <Input
             placeholder='Nacionalidad'
           />
         </Form.Item>
+        <Form.Item
+          name="createAt">
+          <Input
+            placeholder='createAt'
+            disabled
+            hidden
+          />
+        </Form.Item>
+
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button type='primary'
+          <Button className="chefButton" type='primary'
             htmlType='submit'
           >
             {buttonText}
           </Button>
         </Form.Item>
       </Form>
+      </React.Fragment>
     );
   }
 }

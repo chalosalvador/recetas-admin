@@ -1,7 +1,6 @@
 
-.imagen {
-    height: 32px;
-    background-image: url('../imgs/foodservice-Welcome.png');
+#img {
+    height: 565px;
     background-color: lightblue;
     background-repeat: no-repeat;
     background-size: contain;
@@ -11,9 +10,10 @@
 
 .ant-carousel .slick-slide {
     text-align: center;
-    height: 565px;
-    line-height: 160px;
-    background: lavender;
+    height: 265px;
+    width: 165px;
+    line-height: 80px;
+   /* background: lavender;*/
     overflow: hidden;
 }
 

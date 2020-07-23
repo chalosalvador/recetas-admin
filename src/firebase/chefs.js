@@ -1,17 +1,17 @@
 
-import { db } from './index'
+import { db, time } from './index'
 import { ref } from './index'
 import { setState } from 'expect/build/jestMatchersObject';
 
 const add = (chefData) => {
-    return db.collection("chefs").add(chefData);
+    return db.collection("chefs").add(chefData)
 };
 
-const view = (querySnapshot, boards) => {
+const view = (querySnapshot, LChefs) => {
     return querySnapshot.forEach((doc) => {
 
-        const { name, lastname, speciality, experience, job, nationality } = doc.data();
-        boards.push({
+        const { name, lastname, speciality, experience, job, nationality,createAt } = doc.data();
+        LChefs.push({
             key: doc.id,
             doc,
             name,
@@ -19,7 +19,8 @@ const view = (querySnapshot, boards) => {
             speciality,
             experience,
             job,
-            nationality
+            nationality,
+            createAt
         });
     });
 };
