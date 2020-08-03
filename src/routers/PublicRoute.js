@@ -14,9 +14,6 @@ const PublicRoute = ( {
       &&
       (
         history.location.pathname === LOGIN
-        // history.location.pathname === LOGIN_TEACHER ||
-        // history.location.pathname === REGISTRATION_TEACHER ||
-        // history.location.pathname === REGISTRATION_STUDENT
       )
       ? <Redirect to={ ( history.location.state && history.location.state.from.pathname ) || HOME } />
       : <Component { ...props } />

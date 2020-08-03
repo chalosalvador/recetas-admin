@@ -56,7 +56,9 @@ export const doLogout = () => auth.signOut();
 //
 // const users = () => db.ref('users');
 
-// doPasswordReset = email => this.auth.sendPasswordResetEmail( email );
+export const doPasswordReset = (email )=> {
+  return auth.sendPasswordResetEmail( email );
+};
 //
 // doPasswordUpdate = password =>
 //   this.auth.currentUser.updatePassword( password );

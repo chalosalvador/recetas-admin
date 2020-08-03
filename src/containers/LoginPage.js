@@ -3,8 +3,7 @@ import LoginForm from '../components/LoginForm';
 
 const LoginPage = () => (
   <div>
-    <h1>Ingresar</h1>
-    <LoginForm />
+    <LoginForm LoginTitle="Inicio de Sesión"/>
   </div>
 );
 

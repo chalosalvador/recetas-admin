@@ -20,6 +20,8 @@ const Loading = ({ isLoading, error }) => {
           status="500"
           title="Sorry, there was a problem loading the page."
         />
+        {console.log("error", error)}
+        
 
     </div>;
   } else {

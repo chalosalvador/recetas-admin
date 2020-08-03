@@ -65,10 +65,7 @@ class Navigation extends React.Component {
           <SubMenu key='sub2' title={ <span><SnippetsOutlined /><span>Gestion Recetas</span></span> }>
             <Menu.Item key='6'><Link to={ ADDRECIPIES }>Registrar Recetas</Link></Menu.Item>
             <Menu.Item key='7'><Link to={ RECIPESLIST }>Lista de Recetas</Link></Menu.Item>
-            <SubMenu key='sub3' title='Submenu'>
-              <Menu.Item key='8'>Option 7</Menu.Item>
-              <Menu.Item key='9'>Option 8</Menu.Item>
-            </SubMenu>
+            
           </SubMenu>
 
           <Menu.Item key='about'>

@@ -8,7 +8,7 @@ import { setState } from 'expect/build/jestMatchersObject';
 const onView = (querySnapshot, ListU) => {
     return querySnapshot.forEach((doc) => {
         //console.log("QUERY USER",doc.data());
-        const { name, lastname, nickname, weight, gender, dateBirth, healthInfo, height,plan } = doc.data();
+        const { name, lastname, nickname, weight, gender, dateBirth, healthInfo, height, dailyActivities } = doc.data();
         ListU.push({
             key: doc.id,
             doc,
@@ -20,7 +20,7 @@ const onView = (querySnapshot, ListU) => {
             weight,
             gender,
             healthInfo,
-            plan
+            dailyActivities
         });
     });
 };

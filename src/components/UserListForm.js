@@ -153,7 +153,7 @@ class UserListForm extends Component {
     return (
 
       <React.Fragment>
-        <h1>{ListTitle}</h1>
+         <Title level={4}>{ListTitle}</Title>
 
         <br />
         <Table
@@ -225,12 +225,23 @@ class UserListForm extends Component {
                 />
               </Col>
             </Row>
+            <Row>
+              <Col span={24}>
+                <DescriptionItem
+                  title="Problemas de Salud"
+                  content={`${this.state.user.dailyActivities}`}
+                />
+              </Col>
+            </Row>
+            
             <Divider />
 
             <p className="site-description-item-profile-p">Plan Nutricional</p>
             <Row>
 
               <Button type="primary" onClick={
+                
+                 
                 this.showChildrenDrawer  
                 }>
                 Planificación
@@ -246,7 +257,7 @@ class UserListForm extends Component {
                 {this.state.user.plan.map(plan => (        
                   
                    <DescriptionPlan  
-                   content={plan.title} content1={ moment.unix(plan.startTime).format("DD/MMM/YYYY")} />
+                   content={plan.title.name} content1={ moment.unix(plan.startTime).local().format("DD/MMM/YYYY")} />
                   ))}
                 
                 </Drawer>
