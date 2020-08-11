@@ -1,189 +1,178 @@
 
-import React, { Component } from 'react';
-import { Button, Checkbox, Form, Icon, Input, message } from 'antd';
+import React, { Component, useContext, useState, useEffect, useRef } from 'react';
 import { withRouter } from 'react-router-dom';
-import { saveChefsData } from '../firebase';
+import { ref } from '../firebase/index';
+import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
-import { translateMessage } from '../helpers/translateMessage';
+import { UserAddOutlined, DeleteFilled, EditOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Table, Input, Button, Popconfirm, Form, Modal, Typography } from 'antd';
+import { ADDCHEFS } from '../constants/routes';
+import Chefs from '../firebase/chefs';
+import ChefsForm from '../components/ChefsForm';
 
-const hasErrors = ( fieldsError ) => {
-  return Object.keys( fieldsError ).some( field => fieldsError[ field ] );
-};
+const { Title } = Typography;
 
 class ListForm extends Component {
 
   initialState = {
-    Chefname: '',
-    specialism: '',
+    boards: [],
+    key: '',
+    loading: false,
+    visible: false,
+
+
+    name: '',
+    lastname: '',
+    speciality: '',
     experience: '',
-    job: '', 
-    nationality:''
+    job: '',
+    nationality: '',
 
   };
 
-  constructor( props ) {
-    super( props );
+  constructor(props) {
+    super(props);
     this.state = this.initialState;
+    this.unsubscribe = null;
+
+  }
+
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+ 
+  handleCancel = () => {
+    this.setState({ visible: false , chef:null});
+  };
+
+  onCollectionUpdate = (querySnapshot) => {
+    const boards = [];
+    Chefs.view(querySnapshot, boards)
+    this.setState({
+      boards
+    });
   }
 
   componentDidMount() {
-    // To disabled submit button at the beginning.
-    this.props.form.validateFields();
+    this.unsubscribe = ref.onSnapshot(this.onCollectionUpdate);
   }
 
-  handleSubmit = ( e ) => {
-    e.preventDefault();
-    this.props.form.validateFields( ( err, values ) => {
-      if( !err ) {
-        console.log( 'Received values of form: ', values );
-        const { Chefname, specialism, experience, job, nationality } = values;
-
-
-        saveChefsData(Chefname, specialism, experience, job, nationality)
-
-          .catch( error => {
-            console.log( 'error', error );
-            message.error( translateMessage( error.code ) );
-          });
-      };
-    } );
-  };
-
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
-    const {formTitle, buttonText} = this.props;
 
-    // Only show error after a field is touched.
-    const ChefnameError = isFieldTouched( 'Chefname' ) && getFieldError( 'Chefname' );
-    const specialismError = isFieldTouched( 'specialism' ) && getFieldError( 'specialism' );
-    const experienceError = isFieldTouched( 'experience' ) && getFieldError( 'experience' );
-    const jobError = isFieldTouched( 'job' ) && getFieldError( 'job' );
-    const nationalityError = isFieldTouched( 'nationality' ) && getFieldError( 'nationality' );
+    const { visible, loading } = this.state;
+    const chef = this.props;
+
+    const dataSource = this.state.boards;
+    const columns = [
+      {
+        title: 'ID',
+        dataIndex: 'key',
+        key: 'key',
+      },
+      {
+        title: 'Nombre',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: 'Apellido',
+        dataIndex: 'lastname',
+        key: 'lastname',
+      },
+      {
+        title: 'Especialidad',
+        dataIndex: 'speciality',
+        key: 'speciality',
+      },
+      {
+        title: 'Años Experiencia',
+        dataIndex: 'experience',
+        key: 'experience',
+      },
+      {
+        title: 'Trabajo Actual',
+        dataIndex: 'job',
+        key: 'job',
+      },
+      {
+        title: 'Nacionalidad',
+        dataIndex: 'nationality',
+        key: 'nationality',
+      },
+      {
+        title: '',
+        dataIndex: 'delete',
+        width: 70,
+        fixed: 'right',
+        render: (text, boards) =>
+          <Popconfirm   title="Estas seguro de eliminar?" icon={<QuestionCircleOutlined style={{ color: 'red' }} />} onConfirm={(e) => Chefs.onDelete(boards.key, e)}>
+          <Button danger><DeleteFilled/></Button>
+          </Popconfirm>
+      },
+      {
+        title: '',
+        dataIndex: 'edit',
+        width: 70,
+        fixed: 'right',
+        render: (value, chef) =>
+          <Button type="primary" 
+          icon={ <EditOutlined />}
+          onClick={() => {
+            this.setState({ chef });
+            //console.log('chef ROW', chef);
+            this.showModal();
+          }}>
+      </Button>
+
+      }];
+
+    const { ListTitle } = this.props;
 
 
     return (
 
+      <React.Fragment>
+        <Title level={4}>{ListTitle}</Title>
+        <br />
 
+        <Link to={ADDCHEFS}><Button type="primary" icon={<UserAddOutlined />}>Agregar
+        </Button></Link>
 
-      <Form onSubmit={ this.handleSubmit } >
+        <br /><br />
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }} >
+          >
 
-          <h1>{formTitle}</h1>
-      
-        <Form.Item validateStatus={ ChefnameError
-          ? 'error'
-          : '' }
-                   help={ ChefnameError || '' }>
-          { getFieldDecorator( 'Chefname', {
-            rules: [
-              {
-                type: 'text',
-                required: true,
-                value: 'Chefname',
-                message: 'Ingresa texto válido'
-              }
-            ]
-          } )(
-            <Input prefix={ <Icon type='user' style={ { color: 'rgba(0,0,0,.25)' } } /> }
-                       type='text'
-                       placeholder='Nombre Completos' />
-          ) }
-        
-        </Form.Item>
-        <Form.Item validateStatus={ specialismError
-          ? 'error'
-          : '' }
-                   help={ specialismError || '' }>
-          { getFieldDecorator( 'specialism', {
-            rules: [
-              {
-                type: 'text',
-                value: 'specialism',
-                required: true,
-                message: 'Ingresa texto válido'
-              }
-            ]
-          } )(
-            <Input prefix={ <Icon type='text' style={ { color: 'rgba(0,0,0,.25)' } } /> }
-                       type='text'
-                       placeholder='Especialidad' />
-          ) }
-        
-        </Form.Item>
-        <Form.Item validateStatus={ experienceError
-          ? 'error'
-          : '' }
-                   help={ experienceError || '' }>
-          { getFieldDecorator( 'experience', {
-            rules: [
-              {
-                type: 'text',
-                message: 'Ingresa numero de años válidos',
-                required: true,
-                value: 'experience',
-              }
-            ]
-          } )(
-            <Input prefix={ <Icon type='text' style={ { color: 'rgba(0,0,0,.25)' } } /> }
-                       type='text'
-                       placeholder='' />
-          ) }
+        </Table>
 
+{
+  this.state.chef && 
+  <Modal
+  visible={visible}
+  title="Editar Registro de Chefs"
+  onCancel={this.handleCancel}
+  footer={[
+    <Button key="back" onClick={this.handleCancel}>
+      Cancelar
+    </Button>,
+  ]}
+>
 
-        </Form.Item>
-        <Form.Item validateStatus={ jobError
-          ? 'error'
-          : '' }
-                   help={ jobError || '' }>
-          { getFieldDecorator( 'job', {
-            rules: [
-              {
-                type: 'text',
-                message: 'Ingresa texto válido',
-                required: true,
-                value: 'job',
-              }
-            ]
-          } )(
-            <Input prefix={ <Icon type='text' style={ { color: 'rgba(0,0,0,.25)' } } /> }
-                       type='text'
-                       placeholder='Trabajo Actual' />
-          ) }
-        
-        </Form.Item>
-        <Form.Item validateStatus={ nationalityError
-          ? 'error'
-          : '' }
-                   help={ nationalityError || '' }>
-          { getFieldDecorator( 'nationality', {
-            rules: [
-              {
-                type: 'text',
-                message: 'Ingresa texto válido',
-                required: true,
-                value: 'nationality',
-              }
-            ]
-          } )(
-            <Input prefix={ <Icon type='text' style={ { color: 'rgba(0,0,0,.25)' } } /> }
-                       type='text'
-                       placeholder='Nacionalidad' />
-          ) }
-        
-        </Form.Item>
-        <Form.Item>
-          
-          <Button type='primary'
-                  htmlType='submit'
-                  className='chefs-form-button'
-                  disabled={ hasErrors( getFieldsError() ) }
-                  onClick={this.handleSubmit}> {buttonText} </Button>
-        </Form.Item>
-      </Form>
+  <ChefsForm chef={this.state.chef} buttonText={"Editar"}/>
+
+</Modal>
+}
+       
+      </React.Fragment>
     );
   }
 }
 
+export default compose(withRouter)(ListForm);
 
-export default compose(withRouter, Form.create({name:'list_form'}))(ListForm);

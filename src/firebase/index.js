@@ -1,11 +1,12 @@
-import app from 'firebase/app';
+import app, { firestore } from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
+import 'firebase/firestore';
 import 'firebase/functions';
 
 
-const config = {
+export const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
@@ -20,8 +21,18 @@ app.initializeApp( config );
 
 // export default app;
 const auth = app.auth();
-const db = app.database();
-// export const storage = app.storage();
+export const db = app.firestore();
+export const ref = app.firestore().collection('chefs');
+export const refRecipes = app.firestore().collection('recipes');
+export const refI = app.firestore().collection('ingredients');
+export const refUnits = app.firestore().collection('units');
+export const refUser = app.firestore().collection('users');
+//export const refPlan = app.firestore('plan');
+export const createAt= app.firestore.FieldValue.serverTimestamp();
+
+export const storage = app.storage();
+
+export const storageRef = app.storage().ref();
 // export const functions = app.functions();
 
 // *** Auth API ***
@@ -45,11 +56,12 @@ export const doLogout = () => auth.signOut();
 //
 // const users = () => db.ref('users');
 
-// doPasswordReset = email => this.auth.sendPasswordResetEmail( email );
+export const doPasswordReset = (email )=> {
+  return auth.sendPasswordResetEmail( email );
+};
 //
 // doPasswordUpdate = password =>
 //   this.auth.currentUser.updatePassword( password );
 
-export const saveChefsData = (Chefname, specialism, experience, job, nationality) =>{
-	return this.db.ref('chefs').push(Chefname, specialism, experience, job, nationality);
-}
+
+

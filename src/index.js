@@ -7,7 +7,7 @@ import App from './containers/App';
 import * as serviceWorker from './serviceWorker';
 
 import './styles/index.css';
-import { LocaleProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import esES from 'antd/lib/locale-provider/es_ES';
 import 'moment/locale/es';
 import { listenAuthState } from './firebase';
@@ -31,9 +31,9 @@ listenAuthState( authUser => {
 const renderApp = () => render(
   <Provider store={ store }>
     <ConnectedRouter history={ history }>
-      <LocaleProvider locale={ esES }>
+      <ConfigProvider locale={ esES }>
         <App />
-      </LocaleProvider>
+      </ConfigProvider>
     </ConnectedRouter>
   </Provider>,
   target

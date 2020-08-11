@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import LogoutButton from './LogoutButton';
 import '../styles/navigation.css';
-import {ABOUT, ADDCHEFS, EDITCHEFS, CHEFSLIST } from '../constants/routes';
+import {ABOUT, ADDCHEFS, CHEFSLIST, ADDRECIPIES, RECIPESLIST, USERSLIST } from '../constants/routes';
+
+import {HomeOutlined, SolutionOutlined, SnippetsOutlined} from '@ant-design/icons';
 
 const SubMenu = Menu.SubMenu;
 
@@ -51,25 +53,19 @@ class Navigation extends React.Component {
           className='menu'
         >
           <Menu.Item key='home'>
-            <Link to='/'><Icon type='home' /> <span>Home</span></Link>
+            <Link to='/'><HomeOutlined /> <span>Home</span></Link>
           </Menu.Item>
 
-          <SubMenu key='sub1' title={ <span><Icon type='mail' /><span>Gestion Usuarios</span></span> }>
-            <Menu.Item key='2'>
-              <Link to={ ADDCHEFS }>Registrar Chefs</Link></Menu.Item>
-            <Menu.Item key='3'>
-              <Link to={ EDITCHEFS }>Editar Chefs</Link></Menu.Item>
-            <Menu.Item key='4'>
-            <Link to={ CHEFSLIST }>Ver lista de Chefs</Link></Menu.Item>
-          </SubMenu>
-
-          <SubMenu key='sub2' title={ <span><Icon type='appstore' /><span>Administracion de Recetas</span></span> }>
-            <Menu.Item key='5'>Crear nuevas Recetas</Menu.Item>
-            <Menu.Item key='6'>Lista de Recetas</Menu.Item>
-            <SubMenu key='sub3' title='Submenu'>
-              <Menu.Item key='7'>Option 7</Menu.Item>
-              <Menu.Item key='8'>Option 8</Menu.Item>
+          <SubMenu key='sub1' title={ <span><SolutionOutlined /><span>Gestion Usuarios</span></span> }>
+            <Menu.Item key='2'><Link to={ ADDCHEFS }>Registrar Chefs</Link></Menu.Item>
+            <Menu.Item key='3'> <Link to={ CHEFSLIST }>Lista de Chefs</Link></Menu.Item>
+            <Menu.Item key='4'><Link to={ USERSLIST }>Usuarios App</Link></Menu.Item>
             </SubMenu>
+
+          <SubMenu key='sub2' title={ <span><SnippetsOutlined /><span>Gestion Recetas</span></span> }>
+            <Menu.Item key='6'><Link to={ ADDRECIPIES }>Registrar Recetas</Link></Menu.Item>
+            <Menu.Item key='7'><Link to={ RECIPESLIST }>Lista de Recetas</Link></Menu.Item>
+            
           </SubMenu>
 
           <Menu.Item key='about'>
