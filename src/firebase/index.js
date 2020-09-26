@@ -27,6 +27,7 @@ export const refRecipes = app.firestore().collection('recipes');
 export const refI = app.firestore().collection('ingredients');
 export const refUnits = app.firestore().collection('units');
 export const refUser = app.firestore().collection('users');
+//export const refImage= app.firestore().collection('Image');
 //export const refPlan = app.firestore('plan');
 export const createAt= app.firestore.FieldValue.serverTimestamp();
 

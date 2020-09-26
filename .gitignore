@@ -26,3 +26,10 @@ yarn-error.log*
 .env.development
 .env.production
 .env.stage
+
+
+.firebase
+functions/firestore-debug.log
+/functions/node_modules
+/functions/*ServiceAccount.json
+/functions/lib/*

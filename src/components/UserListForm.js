@@ -12,7 +12,7 @@ import Users from '../firebase/user';
 import '../styles/user.css'
 
 import Moment from 'react-moment';
-import 'moment-timezone';
+// import 'moment-timezone';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
 
@@ -27,7 +27,7 @@ const DescriptionItem = ({ title, content }) => (
 const DescriptionPlan = ({ content, content1 }) => (
   <div className="site-description-item-profile-wrapper">
   <Card title={<ScheduleOutlined />} type="inner" bordered={true}>
-  
+
   <p>{"Receta: "+content}</p>
   <p>{"Fecha: "+content1}</p>
   </Card>
@@ -52,7 +52,7 @@ class UserListForm extends Component {
     this.listUsers = null;
     this.listPlanN = null;
   }
- 
+
 
   onCollectionUser = (querySnapshot) => {
     const userNames = [];
@@ -140,7 +140,7 @@ class UserListForm extends Component {
                   	user.plan.push(doc.data());
                 })
                 console.log("USER PLAN",user.plan);
-              
+
               this.key = user.key;
               this.showDrawer();
               console.log("userSelect:", user);
@@ -157,7 +157,7 @@ class UserListForm extends Component {
 
         <br />
         <Table
-          
+
           columns={columns}
           dataSource={dataSource}
           scroll={{ x: 1300 }} >
@@ -196,7 +196,7 @@ class UserListForm extends Component {
             </Row>
             <Row>
               <Col span={24}>
-                <DescriptionItem title="Fecha Nacimiento" 
+                <DescriptionItem title="Fecha Nacimiento"
                   content={
                     <Moment format="DD/MM/YYYY">
                   {this.state.user.dateBirth}
@@ -217,32 +217,25 @@ class UserListForm extends Component {
               </Col>
             </Row>
 
+            
             <Row>
               <Col span={24}>
                 <DescriptionItem
-                  title="Problemas de Salud"
-                  content={this.state.user.healthInfo + "  "}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24}>
-                <DescriptionItem
-                  title="Problemas de Salud"
+                  title="Actividad Fisica"
                   content={`${this.state.user.dailyActivities}`}
                 />
               </Col>
             </Row>
-            
+
             <Divider />
 
             <p className="site-description-item-profile-p">Plan Nutricional</p>
             <Row>
 
               <Button type="primary" onClick={
-                
-                 
-                this.showChildrenDrawer  
+
+
+                this.showChildrenDrawer
                 }>
                 Planificación
                 </Button>
@@ -254,22 +247,22 @@ class UserListForm extends Component {
                   onClose={this.onChildrenDrawerClose}
                   visible={this.state.childrenDrawer}
                 >
-                {this.state.user.plan.map(plan => (        
-                  
-                   <DescriptionPlan  
-                   content={plan.title.name} content1={ moment.unix(plan.startTime).local().format("DD/MMM/YYYY")} />
+                {this.state.user.plan.map(plan => (
+
+                   <DescriptionPlan
+                   content={plan.title.name} content1={ moment.unix(plan.startTime.seconds).local().format("DD/MM/YYYY")} />
                   ))}
-                
+
                 </Drawer>
                 }
 
-                  
-                
+
+
             </Row>
 
           </Drawer>
         }
-        
+
 
         <br /><br />
 
@@ -292,15 +285,24 @@ export default compose(withRouter)(UserListForm);
                     ))} />
 
 
-     <Card type="inner" 
+     <Card type="inner"
                     title= {this.state.plan.forEach((plan) => (
                       plan.key,
                         console.log(plan.date.title, plan.date.starTime)
-                    ))} 
+                    ))}
                     bordered={true}>
                     </Card>
-{this.state.user.plan.map(plan => (        
+{this.state.user.plan.map(plan => (
                     <DescriptionPlan  content={plan.date.startTime.toDate()+" "+plan.date.title} />
                             ))}
-                    
+
+                            <Row>
+              <Col span={24}>
+                <DescriptionItem
+                  title="Problemas de Salud"
+                  content={this.state.user.healthInfo + "  "}
+                />
+              </Col>
+            </Row>
+
  */
