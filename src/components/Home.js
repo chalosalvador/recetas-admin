@@ -128,7 +128,6 @@ class Home extends Component {
           </Col>
 
         </Row>       
-        />
 
       </React.Fragment>
     );

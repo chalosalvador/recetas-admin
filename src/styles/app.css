@@ -7,9 +7,9 @@
 }
 
 .sider__logo {
-    height: 32px;
-    /*background-image: url('../imgs/logo.png');*/
-    background-color: #00aeef;
+    height: 80px;
+    background-image: url('../imgs/logo.png');
+    /*background-color: #00aeef;*/
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
-import { UserAddOutlined, DeleteFilled, PieChartOutlined, EditOutlined, UserOutlined, FieldTimeOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { UserAddOutlined, DeleteFilled, PieChartOutlined, EditOutlined, UserOutlined, FieldTimeOutlined, QuestionCircleOutlined, FileAddOutlined } from '@ant-design/icons';
 import { Table, Input, Button, Popconfirm, Form, Modal, Typography } from 'antd';
 import Recipes from '../firebase/recipes';
 import { ADDRECIPIES } from '../constants/routes';
@@ -123,7 +123,7 @@ class RecipesListForm extends Component {
       
       querySnapshot.forEach((doc) => {
 
-        const { chef, description, servings, time, name, nutritionFacts, calories, protein, fat, category, ingredients, steps } = doc.data();
+        const { chef, description, servings, time, name, nutritionFacts, calories, protein, fat, category, ingredients, steps, picture } = doc.data();
        /* const ingredientsData = [];
         ingredients.forEach((ingredientRef)=>{
           ingredientsData.push({
@@ -156,7 +156,8 @@ class RecipesListForm extends Component {
           time,
           nutritionFacts,
          ingredients: ingredientsData,
-          steps
+          steps,
+          picture
         });
       });
       
@@ -247,7 +248,7 @@ class RecipesListForm extends Component {
             icon={<EditOutlined />}
             onClick={() => {
               this.setState({ recipe });
-              //console.log('recipe ROW', recipe);
+              console.log('recipe ROW', recipe);
               this.showModal();
             }}>
           </Button>
@@ -263,7 +264,7 @@ class RecipesListForm extends Component {
         <Title level={4}>{ListTitle}</Title>
         <br />
 
-        <Link to={ADDRECIPIES}><Button type="primary" icon={<UserAddOutlined />}>Agregar
+        <Link to={ADDRECIPIES}><Button type="primary" icon={<FileAddOutlined />}>Agregar
         </Button></Link>
 
         <br /><br />

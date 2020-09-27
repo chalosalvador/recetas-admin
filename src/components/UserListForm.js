@@ -217,18 +217,11 @@ class UserListForm extends Component {
               </Col>
             </Row>
 
+            
             <Row>
               <Col span={24}>
                 <DescriptionItem
-                  title="Problemas de Salud"
-                  content={this.state.user.healthInfo + "  "}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24}>
-                <DescriptionItem
-                  title="Problemas de Salud"
+                  title="Actividad Fisica"
                   content={`${this.state.user.dailyActivities}`}
                 />
               </Col>
@@ -257,7 +250,7 @@ class UserListForm extends Component {
                 {this.state.user.plan.map(plan => (
 
                    <DescriptionPlan
-                   content={plan.title.name} content1={ moment.unix(plan.startTime).local().format("DD/MMM/YYYY")} />
+                   content={plan.title.name} content1={ moment.unix(plan.startTime.seconds).local().format("DD/MM/YYYY")} />
                   ))}
 
                 </Drawer>
@@ -302,5 +295,14 @@ export default compose(withRouter)(UserListForm);
 {this.state.user.plan.map(plan => (
                     <DescriptionPlan  content={plan.date.startTime.toDate()+" "+plan.date.title} />
                             ))}
+
+                            <Row>
+              <Col span={24}>
+                <DescriptionItem
+                  title="Problemas de Salud"
+                  content={this.state.user.healthInfo + "  "}
+                />
+              </Col>
+            </Row>
 
  */

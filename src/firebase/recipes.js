@@ -14,7 +14,7 @@ const onDelete =(id)=>{
 const onView=(querySnapshot, listR)=>{
     return querySnapshot.forEach((doc) => {
       
-        const{chef, description, servings, time, name, nutritionFacts, category, ingredients, steps }= doc.data();
+        const{chef, description, servings, time, name, nutritionFacts, category, ingredients, steps, picture }= doc.data();
         listR.push({
             key: doc.id,
             doc,
@@ -27,7 +27,8 @@ const onView=(querySnapshot, listR)=>{
             time,
             nutritionFacts,
             ingredients,
-            steps
+            steps, 
+            picture,
         });
     }); 
 }
