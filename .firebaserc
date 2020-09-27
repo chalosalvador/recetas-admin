@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "dev-plan-recetas"
+  },
+  "targets": {
+    "dev-plan-recetas": {
+      "hosting": {
+        "admin": [
+          "dev-plan-recetas"
+        ]
+      }
+    }
   }
 }
