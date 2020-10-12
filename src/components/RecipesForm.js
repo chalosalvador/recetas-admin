@@ -79,9 +79,29 @@ class RecipesForm extends Component {
     this.handleUpload = this.handleUpload.bind(this);
   }
 
+  onChange(value) {
+    console.log(`selected ${value}`);
+  }
+  
+  onBlur() {
+    console.log('blur');
+  }
+  
+  onFocus() {
+    console.log('focus');
+  }
+  
+  onSearch(val) {
+    console.log('search:', val);
+  }
+
 
   handleUpload(event) {
     const file = event.target.files[0];
+    if (file.type !== 'image/png') {
+      message.error(`${file.name} no es un archivo tipo Imagen PNG. Por favor seleccione otra imagen`);
+  
+    }else{
     //const storageRef= app.storage().ref(`Images/${file.name}`);
     const task = storage.ref(`Images/${file.name}`).put(file);
 
@@ -93,7 +113,7 @@ class RecipesForm extends Component {
     }, error => {
       console.log(error.message)
     },
-      async() => {
+      async () => {
         this.setState({
           uploadValue: 100,
           //picture: task.snapshot.downloadURL
@@ -102,6 +122,7 @@ class RecipesForm extends Component {
         });
       });
   }
+}
 
   formRef = React.createRef();
   onReset = () => {
@@ -212,8 +233,8 @@ class RecipesForm extends Component {
       <React.Fragment>
         <div>
           {console.log("picture", recipe.picture)}
-        
-        
+
+
         </div>
 
         <Form  {...formItemLayout}
@@ -261,7 +282,17 @@ class RecipesForm extends Component {
               message: "Seleccione un Chef"
             }]}
           >
-            <Select placeholder="Seleccione un chef">
+            <Select 
+             showSearch
+             onChange={this.onChange}
+             onFocus={this.onFocus}
+             onBlur={this.onBlur}
+             onSearch={this.onSearch}
+             optionFilterProp="children"
+             filterOption={(input, option) =>
+               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+             }
+            placeholder="Seleccione un chef">
               {this.state.chefNames.map(chef => (
                 <Option key={chef.key} >{`${chef.name} ${chef.lastname}`}</Option>
               ))}
@@ -296,23 +327,24 @@ class RecipesForm extends Component {
           <Form.Item
             name="servings"
             label="Porciones"
+            extra="Rango (1-50)"
             rules={[{
               required: true,
               message: 'Ingresar número de porciones'
             }]}>
-            <InputNumber min={1} placeholder="#" />
+            <InputNumber min={1} max={50} placeholder="#"  />
           </Form.Item>
           <Form.Item
 
             name="time"
             label="Tiempo"
-            extra="minutes"
+            extra="Rango (1-420)"
             rules={[
               {
                 required: true,
                 message: 'Ingresar minutos de coción'
               }]}>
-            <InputNumber min={1} placeholder="minutes" />
+            <InputNumber min={1} max={420} placeholder="minutes" />
           </Form.Item>
 
           <Form.Item
@@ -323,37 +355,37 @@ class RecipesForm extends Component {
             <Input.Group compact >
               <Form.Item
                 name={["nutritionFacts", "calories"]}
-                extra="%Calorias"
+                extra="%Calorias(0-100)"  
                 rules={[{
                   required: true,
                   message: "Ingrese Calorías"
                 }]}
                 style={{ display: 'inline-block', }}
               >
-                <InputNumber min={0} placeholder="%Calories" />
+                <InputNumber min={0}  max={100}  placeholder="%Calories" />
               </Form.Item>
               <Form.Item
                 name={["nutritionFacts", "protein"]}
-                extra="%Proteinas"
+                extra="%Proteinas(0-100)"
                 rules={[{
                   required: true,
                   message: "Ingrese Proteína"
                 }]}
                 style={{ display: 'inline-block', margin: '0 6px' }}
               >
-                <InputNumber min={0} placeholder="%Proteins" />
+                <InputNumber min={0} max={100} placeholder="%Proteins" />
               </Form.Item>
 
               <Form.Item
                 name={["nutritionFacts", "fat"]}
-                extra="%Grasas"
+                extra="%Grasas(0-100)"
                 rules={[{
                   required: true,
                   message: "Ingrese Grasas"
                 }]}
                 style={{ display: 'inline-block', }}
               >
-                <InputNumber min={0} placeholder="%Fat" />
+                <InputNumber min={0} max={100}  placeholder="%Fat" />
               </Form.Item>
             </Input.Group  >
           </Form.Item>
@@ -366,7 +398,7 @@ class RecipesForm extends Component {
                   {fields.map((field, index) => (
 
                     <Form.Item
-                      {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                      {...(index === 0  ? formItemLayout : formItemLayoutWithOutLabel)}
                       label={index === 0 ? 'Ingredientes: ' : ''}
                       required={true}
                       key={field.key}
@@ -381,7 +413,18 @@ class RecipesForm extends Component {
                         rules={[{ required: true, message: 'Ingrese un ingrediente' }]}
                         noStyle
                       >
-                        <Select placeholder='Ingrediente'
+                        <Select
+                          showSearch
+                          onChange={this.onChange}
+                          onFocus={this.onFocus}
+                          onBlur={this.onBlur}
+                          onSearch={this.onSearch}
+                          optionFilterProp="children"
+                          filterOption={(input, option) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          }
+
+                          placeholder='Ingrediente'
                           dropdownRender={menu => (
                             <div>
                               {menu}
@@ -416,7 +459,18 @@ class RecipesForm extends Component {
                         rules={[{ required: true, message: 'Ingrese la unidad del ingrediente' }]}
                         noStyle
                       >
-                        <Select placeholder="Unidad del Ingrediente"  >
+                        <Select 
+                        placeholder="Unidad del Ingrediente"  
+                        showSearch
+                        onChange={this.onChange}
+                        onFocus={this.onFocus}
+                        onBlur={this.onBlur}
+                        onSearch={this.onSearch}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                        >
                           {this.state.unitNames.map(units => (
                             <Option key={units.key}>{units.name}</Option>
                           ))}
@@ -429,11 +483,12 @@ class RecipesForm extends Component {
                         style={{ display: 'inline-block', }}
                         fieldKey={[field.fieldKey, 'quantity']}
                         rules={[{ required: true, message: 'Ingrese la cantidad del ingrediente' }]}
+                        extra="Rango (1-800)"
                         noStyle
                       >
-                        <InputNumber min={1} placeholder="Cantidad" />
+                        <InputNumber min={1} max={800}  placeholder="Cantidad" />
                       </Form.Item>
-                      {fields.length > 1 ? (
+                      {fields.length > 1  ? (
                         <MinusCircleOutlined
                           className="dynamic-delete-button"
                           style={{ margin: '0 5px' }}
@@ -444,19 +499,19 @@ class RecipesForm extends Component {
                       ) : null}
                     </Form.Item>
                   ))}
-                  <Form.Item {...formButton}
-                    xs={2} sm={4} md={6} lg={8} xl={10}>
+                  <Form.Item {...formButton} xs={2} sm={4} md={6} lg={8} xl={10}>
+                  {fields.length <= 19 ?(
                     <Button
-
-                      block
-                      onClick={() => {
-                        add();
-                      }}
-                      style={{ width: '50%' }}
-
-                    >
-                      <PlusOutlined />Ingrediente
-                </Button>
+                    block
+                    onClick={() => {
+                      add();
+                    }}
+                    style={{ width: '50%' }}
+                  >
+                    <PlusOutlined />Ingrediente
+              </Button>
+                   ): null }
+                    
                   </Form.Item>
                 </div>
               );
@@ -499,6 +554,8 @@ class RecipesForm extends Component {
                     </Form.Item>
                   ))}
                   <Form.Item {...formButton}>
+                  {fields.length <= 9 ?(
+
                     <Button
                       block
                       onClick={() => {
@@ -509,6 +566,8 @@ class RecipesForm extends Component {
                     >
                       <PlusOutlined />Procedimiento
                 </Button>
+                  ): null} 
+                    
                   </Form.Item>
                 </div>
               );
@@ -529,8 +588,8 @@ class RecipesForm extends Component {
               alt="imagen"
               height="300"
               width="400"
-              src={this.state.picture }/>
-              </Form.Item>
+              src={this.state.picture} />
+          </Form.Item>
 
           <Form.Item
             name="createAt">

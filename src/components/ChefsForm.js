@@ -28,7 +28,11 @@ class ChefsForm extends Component {
     experience: '',
     job: '',
     nationality: '',
-    chef: ''
+    chef: '',
+
+    searchText: '',
+    searchedColumn: '',
+
 
   };
 
@@ -126,6 +130,7 @@ class ChefsForm extends Component {
         <Form.Item
           name="experience"
           label="Años experiencia"
+          extra="Rango (1-40)"
           rules={[{
             required: true,
             message: 'Ingresar años de experiencia'
@@ -134,6 +139,7 @@ class ChefsForm extends Component {
 
           <InputNumber min={1} max={40}
             placeholder="#"
+            
           />
 
         </Form.Item>

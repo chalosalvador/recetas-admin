@@ -6,11 +6,13 @@ import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
-import { UserAddOutlined, DeleteFilled, PieChartOutlined, EditOutlined, UserOutlined, FieldTimeOutlined, QuestionCircleOutlined, FileAddOutlined } from '@ant-design/icons';
-import { Table, Input, Button, Popconfirm, Form, Modal, Typography } from 'antd';
+import { UserAddOutlined, DeleteFilled, PieChartOutlined, EditOutlined, UserOutlined, FieldTimeOutlined,SearchOutlined,  QuestionCircleOutlined, FileAddOutlined } from '@ant-design/icons';
+import { Table, Input, Button, Popconfirm, Form, Modal, Typography, Space } from 'antd';
 import Recipes from '../firebase/recipes';
 import { ADDRECIPIES } from '../constants/routes';
 import RecipesForm from '../components/RecipesForm';
+
+import Highlighter from "react-highlight-words";
 
 const { Title } = Typography;
 
@@ -27,6 +29,9 @@ class RecipesListForm extends Component {
     loading: false,
     visible: false,
 
+    searchText: '',
+    searchedColumn: '',
+
   };
 
   constructor(props) {
@@ -37,6 +42,70 @@ class RecipesListForm extends Component {
     this.listIngredients = null;
     this.listUnits = null;
   }
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Buscar
+          </Button>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Borrar
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : '',
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select(), 100);
+      }
+    },
+    render: text =>
+      this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[this.state.searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
 
   showModal = () => {
     this.setState({
@@ -135,7 +204,6 @@ class RecipesListForm extends Component {
         }
         )*/
         
-        
         const ingredientsData = [];
         ingredients.forEach((ingredientRef)=>{
           ingredientsData.push({
@@ -161,8 +229,7 @@ class RecipesListForm extends Component {
         });
       });
       
-       //console.log(listR[0].chef);
-      // console.log(chefNames)
+      //console.log(chefName)
        //console.log("ingredientes",this.state.ingredientNames)
        //console.log("unidades",this.state.unitNames)
        
@@ -187,43 +254,39 @@ class RecipesListForm extends Component {
 
     const dataSource = this.state.listR;
     const columns = [
-      {
-        title: 'ID',
-        dataIndex: 'key',
-        key: 'key',
-      },
+      
       {
         title: 'Nombre',
         dataIndex: 'name',
         key: 'name',
-      },
-      {
-        title: 'Chef',
-        dataIndex: 'chef',
-        key: 'chef',
+        ...this.getColumnSearchProps('name'),  
+        width: 120, 
       },
       {
         title: 'Descripcion/Nota',
         dataIndex: 'description',
         key: 'description',
+        width: 200,
       },
       {
         title: 'Categoria',
         dataIndex: 'category',
         key: 'category',
-        width: 100,
+        width: 100,  
       },
       {
         title: "Porciones",
         dataIndex: 'servings',
         key: 'servings',
+        ...this.getColumnSearchProps('servings'), 
         width: 100,
       },
       {
-        title: <FieldTimeOutlined />,
+        title: "Tiempo (min)",
         dataIndex: 'time',
         key: 'time',
-        width: 50,
+        ...this.getColumnSearchProps('time'), 
+        width: 100,
       },
       
 
