@@ -40,8 +40,8 @@
     "build:prod": "REACT_APP_ENV=production yarn build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "deploy:stage": "yarn build:stage && firebase functions:config:set c.env=stage && firebase use dev-plan-recetas && firebase deploy",
-    "deploy:prod": "yarn build:prod && firebase functions:config:set c.env=prod && firebase use plan-recetas && firebase deploy"
+    "deploy:stage": "yarn build:stage && firebase functions:config:set c.env=stage && firebase use dev-plan-recetas && firebase target:apply hosting admin dev-plan-recetas && firebase deploy",
+    "deploy:prod": "yarn build:prod && firebase functions:config:set c.env=prod && firebase use plan-recetas && firebase target:apply hosting admin plan-recetas && firebase deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
