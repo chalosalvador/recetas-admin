@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Checkbox, Form, Input, message, Typography, Modal } from 'antd';
+import { Button, Row, Col, Checkbox, Form, Input, message, Typography, Modal, notification  } from 'antd';
 import { doSignInWithEmailAndPassword, doPasswordReset } from '../firebase';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -15,6 +15,7 @@ const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
+
 const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
@@ -46,7 +47,8 @@ class LoginForm extends Component {
     console.log(this.state.reset)
     doPasswordReset(this.state.reset)
     .then(success=>{
-      message.success('Listo! Revisa tu bandeja, enviamos un correo con el link para restablecer tu contraseña');
+      message.success('Listo! Te enviamos un correo con el link para restablecer tu contraseña en unos segundos');
+      this.openNotificationWithIcon('info');
       this.setModal2Visible(false);
     })
     .catch(error => {
@@ -55,8 +57,24 @@ class LoginForm extends Component {
       }
     })
     
-    
 }
+openNotificationWithIcon = type => {
+  notification[type]({
+    message: 'Recuerda!',
+    description:
+      'Si no encuentras el correo de reestablecer contraseña entre los principales, revisa en tu bandeja de Correos No Deseados o Spam y configuralos para que en próximas ocasiones te aparezca entre los principales ',
+    duration: 20,
+   });
+};
+openNotification = () => {
+  const args = {
+    message: 'Recuerda!',
+    description:
+      'Si no encuentras el correo de reestablecer contraseña entre los principales, revisa en tu bandeja de Correos No Deseados o Spam y oonfiguralos para que en proximas ocasiones te aparezca entre los principales ',
+    duration: 20,
+  };
+  notification.open(args);
+};
 
   handleSubmit = values => {
    
@@ -65,13 +83,16 @@ class LoginForm extends Component {
 
         doSignInWithEmailAndPassword( email, password )
           .then( async (authUser) => {
-            /* Codigo para autentificar el admin  */
+            /* Codigo para autentificar el admin  
             const idTokenResult = authUser.getIdTokenResult();
 
             if(!!idTokenResult.claims.admin) {
             this.props.startSetLoginState( authUser.uid );
             window.location.reload();  
-          } 
+          } */
+          this.props.startSetLoginState( authUser.uid );
+          window.location.reload();  
+
           /*else {
             // muestra error de permiso denegado
             console.log( 'Acceso denegado')
@@ -93,7 +114,14 @@ class LoginForm extends Component {
   
     return (
       <React.Fragment>
-      <Title level={4}>{LoginTitle}</Title>
+
+
+
+        <Row>
+      
+      <Col span={12} offset={6}>
+
+      <Title >{LoginTitle}</Title>
       <br />
       <Form
       {...layout}
@@ -140,7 +168,7 @@ class LoginForm extends Component {
        
       </Form.Item>
 
-      <Form.Item>
+      <Form.Item >
         <Button 
         type="primary" 
         htmlType="submit" 
@@ -149,7 +177,7 @@ class LoginForm extends Component {
         </Button>
       </Form.Item>
     </Form>
-    <Button type="link" onClick={() => this.setModal2Visible(true)}>Olvide la contraseña!</Button>
+    <Button wrapperCol={{ ...layout.wrapperCol, offset: 6 }} type="link" onClick={() => this.setModal2Visible(true)}>Olvide la contraseña!</Button>
 
 
     <Modal
@@ -172,6 +200,20 @@ class LoginForm extends Component {
           
 
       </Modal>
+    
+
+
+
+  
+      </Col>
+      
+      
+    </Row>
+
+
+
+
+      
 
     </React.Fragment>
     );

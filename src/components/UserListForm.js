@@ -6,10 +6,11 @@ import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { startSetLoginState } from '../actions/authActions';
-import { UserAddOutlined, DeleteFilled, PieChartOutlined, EyeOutlined, UserOutlined, ScheduleOutlined, FieldTimeOutlined } from '@ant-design/icons';
-import { Table, Input, Button, Popconfirm, Form, Drawer, List, Divider, Col, Row, Avatar, Card, Typography } from 'antd';
+import { UserAddOutlined, DeleteFilled, PieChartOutlined, EyeOutlined, UserOutlined, ScheduleOutlined, FieldTimeOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Input, Button, Popconfirm, Form, Drawer, List, Divider, Col, Row, Avatar, Card, Typography, Space } from 'antd';
 import Users from '../firebase/user';
 import '../styles/user.css'
+import Highlighter from "react-highlight-words";
 
 import Moment from 'react-moment';
 // import 'moment-timezone';
@@ -43,6 +44,8 @@ class UserListForm extends Component {
     key: '',
     loading: false,
     visible: false,
+    searchText: '',
+    searchedColumn: ''
 
   };
 
@@ -86,6 +89,70 @@ class UserListForm extends Component {
     });
   };
 
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Buscar
+          </Button>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          Borrar
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : '',
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select(), 100);
+      }
+    },
+    render: text =>
+      this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[this.state.searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
 
   render() {
 
@@ -94,35 +161,30 @@ class UserListForm extends Component {
 
     const dataSource = this.state.userNames;
     const columns = [
-      {
-        title: 'ID',
-        dataIndex: 'key',
-        key: 'key',
-      },
+      
       {
         title: 'Nombre',
         dataIndex: 'name',
         key: 'name',
+        ...this.getColumnSearchProps('name'),   
       },
       {
         title: 'Apellido',
         dataIndex: 'lastname',
         key: 'lastname',
+        ...this.getColumnSearchProps('lastname'),   
       },
       {
         title: 'Apodo',
         dataIndex: 'nickname',
         key: 'nickname',
-      },
-      {
-        title: 'Fecha Nacimiento',
-        dataIndex: 'dateBirth',
-        key: 'dateBirth',
+        ...this.getColumnSearchProps('nickname'),   
       },
       {
         title: "Género",
         dataIndex: 'gender',
         key: 'gender',
+        ...this.getColumnSearchProps('gender'),   
       },
 
       {

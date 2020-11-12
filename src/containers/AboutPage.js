@@ -6,21 +6,36 @@ const { Paragraph } = Typography;
 
 export default () => (
   <React.Fragment>
-  <Row>
+    <Row>
       <Col span={8}>
-      <Title level={4}>Acerca de Nosotros</Title>
-      
-      <Title level={5}>Equipo de Desarrollo</Title>
+        
+      <img src={foodiePlan} alt="logo" height={200} />
+        
+      </Col>
+      <Col span={8}>
+      <Title aling="center" level={4}>Acerca de Nosotros</Title>
       <Paragraph >
-        Adriana Santacruz y Wendy Villegas
+          Sistema web Admin FoodiePlan permite el acceso solo a usuarios admin.
+
+          En donde el usuario puede realizar las siguientes funciones:
+        <ul>
+            <li>Gestion de Chefs</li>
+            <li>Gestion de Recetas</li>
+            <li>Visualizacion de Usuarios Clientes de Aplicacion Movil</li>
+
+          </ul>
+        <Paragraph >
+           Desarrollado por Adriana Santacruz y Wendy Villegas
       </Paragraph>
-      <p></p>
+
+        </Paragraph>
+  
       </Col>
       <Col span={8}>
-      <img src={foodiePlan} alt="logo" height={500}/>
+     
       </Col>
-      <Col span={8}></Col>
+      
     </Row>
-  
+
   </React.Fragment>
 )
